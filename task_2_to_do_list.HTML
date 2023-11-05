@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Varma's To-Do List</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            margin: 0;
+            background-color: #f0f0f0;
+	    background-image: url('https://img.freepik.com/free-vector/light-green-paint-background_78370-1861.jpg?w=1800&t=st=1699178605~exp=1699179205~hmac=d93ce78bafcd4406f1bfb2b6396f430a17944212bf3e8bf4623cfe0d008feec6' );
+		background-size: 1920px 1080px;
+        }
+        h1 {
+            color: #333;
+        }
+        .todo-container {
+            display: flex;
+            width: 100%;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .input-container {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            padding: 10px;
+            background-color: transparant;
+            border-radius: 5px;
+            margin: 10px;
+        }
+        .input-container input[type="text"] {
+            border: none;
+            width: 80%;
+            font-size: 16px;
+            padding: 10px;
+            border-radius: 5px;
+        }
+        .input-container button {
+            background-color: #4CAF50; 
+            color: white;
+            border: none;
+            padding: 20px 40px;
+            cursor: pointer;
+            border-radius: 5px;
+            margin-top: 10px; 
+        }
+        .input-container button:hover {
+            background-color: #45A049;
+        }
+        .task-container {
+            flex: 1;
+            text-align: left;
+        }
+        .task {
+            display: flex;
+            justify-content: space-between;
+            background-color: transparent;
+            padding: 15px;
+            border-radius: 5px;
+            margin: 10px 0;
+        }
+        .task input[type="text"] {
+            border: none;
+            width: 90%;
+            font-size: 16px;
+            padding: 10px;
+        }
+        .task button {
+            background-color: #f44336;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            cursor: pointer;
+        }
+        .task button:hover {
+            background-color: #d32f2f;
+        }
+    </style>
+</head>
+<body>
+    <h1>Varma's To-Do List</h1>
+    <div class="todo-container">
+        <div class="input-container">
+            <input type="text" id="taskInput" placeholder="Add a new task">
+            <button onclick="addTask()">Add</button>
+        </div>
+        <div class="task-container" id="tasks"></div>
+    </div>
+    <script>
+        let taskCounter = 1;
+
+        function addTask() {
+            var taskInput = document.getElementById("taskInput");
+            var taskText = taskInput.value.trim();
+            
+            if (taskText !== "") {
+                var taskList = document.getElementById("tasks");
+                var taskDiv = document.createElement("div");
+                taskDiv.className = "task";
+                taskDiv.innerHTML = `
+                    <span>${taskCounter}.</span>
+                    <input type="text" value="${taskText}" readonly>
+                    <button onclick="removeTask(this)">Remove</button>
+                `;
+                taskList.appendChild(taskDiv);
+                taskInput.value = "";
+                taskCounter++;
+            }
+        }
+
+        function removeTask(button) {
+            var taskList = document.getElementById("tasks");
+            taskList.removeChild(button.parentElement);
+        }
+    </script>
+</body>
+</html>

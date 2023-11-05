@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Quiz </title>
+    <style>
+        body {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            margin: 0;
+            background-color: #f7f7f7;
+            font-family: Arial, sans-serif;
+ background-image: url('https://img.freepik.com/premium-vector/hand-painted-abstract-colorful-watercolor-stain-background-digital-painting_241369-46.jpg?w=1480' );
+		background-size: 1920px 1080px;
+        }
+
+        .container {
+            text-align: center;
+            padding: 20px;
+            background-color: #fff;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+        }
+
+        h1, h2, p {
+            color: #333;
+        }
+
+        label {
+            font-weight: bold;
+        }
+
+        select, button {
+            padding: 10px;
+            font-size: 16px;
+            border: none;
+            border-radius: 5px;
+            background-color: #3498db;
+            color: #fff;
+            cursor: pointer;
+        }
+
+        select:hover, button:hover {
+            background-color: #2980b9;
+        }
+
+        button#start-quiz-button {
+            background-color: #4CAF50; 
+            transition: background-color 0.2s;
+        }
+
+        button#start-quiz-button:hover {
+            background-color: #45A049; 
+        }
+
+        button {
+            margin-top: 10px;
+        }
+
+        ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        ul li {
+            margin: 10px 0;
+        }
+
+        ul li input {
+            margin-right: 10px;
+        }
+
+        .correct {
+            color: #4CAF50;
+        }
+
+        .incorrect {
+            color: #F44336;
+        }
+
+        .go-home-button {
+            background-color: #3498db;
+            color: #fff;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            margin-top: 20px;
+            cursor: pointer;
+        }
+
+        .go-home-button:hover {
+            background-color: #2980b9;
+        }
+    </style>
+</head>
+<body>
+    <div class="container landing-container">
+        <h1>Select the subject to attend the QUIZ</h1>
+        <p>Test your knowledge and have fun!</p>
+        <label for="subject-select">Select a Subject:</label>
+        <select id="subject-select">
+            <option value="web-development">Web Development</option>
+            <option value="programming">Programming</option>
+            <!-- Add more subjects as needed -->
+        </select>
+        <button id="start-quiz-button">Start Quiz</button>
+    </div>
+
+    <div class="container quiz-container" style="display: none;">
+        <h1 id="quiz-title">Quiz Title</h1>
+        <p id="question">Question goes here</p>
+        <ul id="choices">
+            <!-- Choices will be dynamically added here -->
+        </ul>
+        <button id="next-btn">Next</button>
+    </div>
+
+    <div class="container result-container" style="display: none;">
+        <h2>Quiz Results</h2>
+        <p id="result"></p>
+        <button id="go-home-button" class="go-home-button">Go to Home</button>
+    </div>
+
+    <script>
+        const subjects = {
+            "web-development": {
+                title: "Web Development Quiz",
+                questions: [
+                    {
+                        question: "What does HTML stand for?",
+                        choices: ["Hypertext Markup Language", "Hyperlink and Text Markup Language", "High Tech Multi-Language"],
+                        correctAnswer: "Hypertext Markup Language"
+                    },
+                    {
+                        question: "Which of the following is NOT a CSS property?",
+                        choices: ["color", "font-family", "click-event"],
+                        correctAnswer: "click-event"
+                    },
+                    {
+                        question: "What is the primary purpose of JavaScript?",
+                        choices: ["Styling web pages", "Adding interactivity to websites", "Creating databases"],
+                        correctAnswer: "Adding interactivity to websites"
+                    }
+                ],
+            },
+            "programming": {
+                title: "Programming Quiz",
+                questions: [
+                    {
+                        question: "What is a variable in programming?",
+                        choices: ["A reserved word", "A container for storing data", "A programming function"],
+                        correctAnswer: "A container for storing data"
+                    },
+                    {
+                        question: "Which language is known for its use in machine learning and data science?",
+                        choices: ["JavaScript", "Python", "C++"],
+                        correctAnswer: "Python"
+                    },
+                    {
+                        question: "What does the 'if' statement do?",
+                        choices: ["It repeats a block of code", "It performs a specific task", "It makes a decision in code"],
+                        correctAnswer: "It makes a decision in code"
+                    }
+                ],
+            },
+          
+        };
+
+        const landingContainer = document.querySelector(".landing-container");
+        const quizContainer = document.querySelector(".quiz-container");
+        const resultContainer = document.querySelector(".result-container");
+        const startQuizButton = document.getElementById("start-quiz-button");
+        const subjectSelect = document.getElementById("subject-select");
+        const quizTitleElement = document.getElementById("quiz-title");
+        const questionElement = document.getElementById("question");
+        const choicesElement = document.getElementById("choices");
+        const resultElement = document.getElementById("result");
+        const nextButton = document.getElementById("next-btn");
+        const goHomeButton = document.getElementById("go-home-button");
+
+        let currentQuestion = 0;
+        let score = 0;
+        let currentSubject = null;
+
+        function displayQuestion() {
+            const question = subjects[currentSubject].questions[currentQuestion];
+            quizTitleElement.textContent = subjects[currentSubject].title;
+            questionElement.textContent = question.question;
+            choicesElement.innerHTML = "";
+            question.choices.forEach((choice) => {
+                const li = document.createElement("li");
+                const input = document.createElement("input");
+                input.type = "radio";
+                input.name = "choice";
+                input.value = choice;
+                li.appendChild(input);
+                li.appendChild(document.createTextNode(choice));
+                choicesElement.appendChild(li);
+            });
+        }
+
+        function checkAnswer() {
+            const selectedChoice = document.querySelector('input[name="choice"]:checked');
+            if (selectedChoice) {
+                const userAnswer = selectedChoice.value;
+                if (userAnswer === subjects[currentSubject].questions[currentQuestion].correctAnswer) {
+                    score++;
+                    selectedChoice.parentNode.classList.add("correct");
+                } else {
+                    selectedChoice.parentNode.classList.add("incorrect");
+                }
+                selectedChoice.disabled = true;
+                currentQuestion++;
+                if (currentQuestion < subjects[currentSubject].questions.length) {
+                    displayQuestion();
+                } else {
+                    showResult();
+                }
+            }
+        }
+
+        function showResult() {
+            quizContainer.style.display = "none";
+            resultContainer.style.display = "block";
+            resultElement.textContent = `You scored ${score} out of ${subjects[currentSubject].questions.length} questions.`;
+        }
+
+        startQuizButton.addEventListener("click", function () {
+            currentSubject = subjectSelect.value;
+            landingContainer.style.display = "none";
+            quizContainer.style.display = "block";
+            currentQuestion = 0;
+            score = 0;
+            displayQuestion();
+        });
+
+        nextButton.addEventListener("click", checkAnswer);
+
+        goHomeButton.addEventListener("click", function () {
+            resultContainer.style.display = "none";
+            landingContainer.style.display = "block";
+        });
+    </script>
+</body>
+</html>
